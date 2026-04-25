@@ -32,8 +32,8 @@ export default function Home() {
   { month: "June", desktop: 214, mobile: 140 },
 ]
   return (
-    <div className="flex min-h-svh items-center justify-center">
-      
-    </div>
+    <h1>
+      It's the app
+    </h1>
   )
 }
