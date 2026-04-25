@@ -21,16 +21,16 @@ export default function Layout({
   return (
     <html lang="en" className="h-svh">
       <body
-        className={`${raleway.variable} min-h-screen bg-background text-foreground font-sans`}
+        className={`${raleway.variable} flex h-svh flex-col bg-background text-foreground font-sans [--app-header-height:3.5rem]`}
       >
         <Header />
-        <div className="min-h-0 flex-1">
+        <div className="h-[calc(100svh-var(--app-header-height))] overflow-hidden">
           <SidebarProvider
-            defaultOpen={false}
-            className="h-full !min-h-0 overflow-hidden [--sidebar-mobile-offset:var(--app-header-height)] [--sidebar-mobile-height:calc(100svh-var(--app-header-height))]"
+            defaultOpen={true}
+            className="h-full min-h-0 overflow-hidden [--sidebar-mobile-offset:var(--app-header-height)] [--sidebar-mobile-height:calc(100svh-var(--app-header-height))]"
           >
             <AppSidebar />
-            <SidebarInset className="min-h-0 overflow-hidden">
+            <SidebarInset className="min-h-0 h-full overflow-hidden">
               <div className="p-2 md:p-4">
                 <SidebarTrigger />
               </div>
