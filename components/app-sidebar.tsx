@@ -63,7 +63,7 @@ export function AppSidebar() {
     <Sidebar className="h-full">
       <SidebarContent className="h-full overflow-hidden">
         <SidebarGroup>
-          <SidebarGroupLabel className="uppercase text-base text-[#272b2a]/50">
+          <SidebarGroupLabel className="uppercase text-base text-foreground">
             Application
           </SidebarGroupLabel>
           <SidebarMenu>
@@ -80,7 +80,7 @@ export function AppSidebar() {
           </SidebarMenu>
         </SidebarGroup>
         <SidebarGroup>
-          <SidebarGroupLabel className="uppercase text-base text-[#272b2a]/50">
+          <SidebarGroupLabel className="uppercase text-base text-foreground">
             Projects
           </SidebarGroupLabel>
           <SidebarMenu>

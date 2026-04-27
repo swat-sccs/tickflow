@@ -7,6 +7,7 @@ import {
 } from "@/components/ui/sidebar";
 import { Raleway } from "next/font/google";
 import "./globals.css";
+import { ThemeProvider } from "@/components/theme-provider";
 
 const raleway = Raleway({
   subsets: ["latin"],
@@ -19,25 +20,32 @@ export default function Layout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="h-svh">
+    <html lang="en" className="h-svh" suppressHydrationWarning>
       <body
         className={`${raleway.variable} flex h-svh flex-col bg-background text-foreground font-sans [--app-header-height:3.5rem]`}
       >
-        <Header />
-        <div className="h-[calc(100svh-var(--app-header-height))] overflow-hidden">
-          <SidebarProvider
-            defaultOpen={true}
-            className="h-full min-h-0 overflow-hidden [--sidebar-mobile-offset:var(--app-header-height)] [--sidebar-mobile-height:calc(100svh-var(--app-header-height))]"
-          >
-            <AppSidebar />
-            <SidebarInset className="min-h-0 h-full overflow-hidden">
-              <div className="p-2 md:p-4">
-                <SidebarTrigger />
-              </div>
-              <div className="min-h-0 flex-1 overflow-auto">{children}</div>
-            </SidebarInset>
-          </SidebarProvider>
-        </div>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <Header />
+          <div className="h-[calc(100svh-var(--app-header-height))] overflow-hidden">
+            <SidebarProvider
+              defaultOpen={true}
+              className="h-full min-h-0 overflow-hidden [--sidebar-mobile-offset:var(--app-header-height)] [--sidebar-mobile-height:calc(100svh-var(--app-header-height))]"
+            >
+              <AppSidebar />
+              <SidebarInset className="min-h-0 h-full overflow-hidden">
+                <div className="p-2 md:p-4">
+                  <SidebarTrigger />
+                </div>
+                <div className="min-h-0 flex-1 overflow-auto">{children}</div>
+              </SidebarInset>
+            </SidebarProvider>
+          </div>
+        </ThemeProvider>
       </body>
     </html>
   );
