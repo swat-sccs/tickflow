@@ -14,7 +14,7 @@ import { Activity, Folder, House, List, VenusAndMars } from "lucide-react";
 
 const sidebarWorkspace = [
   {
-    url: "/dashboard",
+    url: "/",
     icon: House,
     label: "Dashboard",
   },
