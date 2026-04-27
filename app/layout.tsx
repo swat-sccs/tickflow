@@ -38,7 +38,9 @@ export default function Layout({
             >
               <AppSidebar />
               <SidebarInset className="min-h-0 h-full overflow-hidden">
-                <div className="min-h-0 flex-1 overflow-auto">{children}</div>
+                <div className="min-h-screen flex justify-center items-center">
+                  {children}
+                </div>
               </SidebarInset>
             </SidebarProvider>
           </div>
