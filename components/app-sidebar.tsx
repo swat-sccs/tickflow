@@ -10,13 +10,25 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
 } from "@/components/ui/sidebar";
-import { Activity, Folder, House, List, VenusAndMars } from "lucide-react";
+import {
+  Activity,
+  Folder,
+  House,
+  List,
+  VenusAndMars,
+  Kanban,
+} from "lucide-react";
 
 const sidebarWorkspace = [
   {
     url: "/",
     icon: House,
     label: "Dashboard",
+  },
+  {
+    url: "/board",
+    icon: Kanban,
+    label: "Board",
   },
   {
     url: "/issues",
