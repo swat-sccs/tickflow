@@ -4,6 +4,7 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import {
+  LucideIcon,
   Plus,
   ArrowRight,
   Globe,
@@ -25,7 +26,7 @@ import {
 import { Progress } from "@/components/ui/progress";
 
 function CardImage(props: {
-  icon?;
+  icon: LucideIcon;
   name: string;
   title: string;
   description: string;
