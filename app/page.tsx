@@ -105,34 +105,36 @@ export function CardImage(props: { text: string; number: number }) {
 
 export default function Home() {
   return (
-    <div className="flex flex-col w-4/5 h-9/10 gap-6">
-      <div className="flex flex-col gap-4 justify-left">
-        <h1 className="text-4xl">Hello, Damian.</h1>
-        <p className="text-secondary">
-          3 open issues on your plate, across 2 projects
-        </p>
-        <div className="flex gap-2">
-          <Button variant="default">
-            <Plus />
-            New issue
-          </Button>
-          <Button variant="outline">
-            View my issues
-            <ArrowRight />
-          </Button>
+    <div className="flex justify-center items-center">
+      <div className="flex flex-col w-4/5 h-9/10 gap-6">
+        <div className="flex flex-col gap-4 justify-left">
+          <h1 className="text-4xl">Hello, Damian.</h1>
+          <p className="text-secondary">
+            3 open issues on your plate, across 2 projects
+          </p>
+          <div className="flex gap-2">
+            <Button variant="default">
+              <Plus />
+              New issue
+            </Button>
+            <Button variant="outline">
+              View my issues
+              <ArrowRight />
+            </Button>
+          </div>
         </div>
-      </div>
-      <Separator />
-      <div className="flex flex-col gap-6">
-        <div className="flex">
-          <CardImage text="Total open" number={28} />
-          <CardImage text="Assigned to me" number={3} />
-          <CardImage text="In progress" number={2} />
-          <CardImage text="Closed" number={6} />
-        </div>
-        <div className="flex gap-2">
-          <TableDemo />
-          <TableDemo />
+        <Separator />
+        <div className="flex flex-col gap-6">
+          <div className="flex">
+            <CardImage text="Total open" number={28} />
+            <CardImage text="Assigned to me" number={3} />
+            <CardImage text="In progress" number={2} />
+            <CardImage text="Closed" number={6} />
+          </div>
+          <div className="flex gap-2">
+            <TableDemo />
+            <TableDemo />
+          </div>
         </div>
       </div>
     </div>

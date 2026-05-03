@@ -16,7 +16,7 @@ import { Share_Tech } from "next/font/google";
 import { Command, CommandInput } from "@/components/ui/command";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "./ui/separator";
-import { useTheme } from "next-themes";
+import { useTheme } from "./theme-provider";
 
 const shareTech = Share_Tech({
   weight: "400",

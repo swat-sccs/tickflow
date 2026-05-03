@@ -13,8 +13,13 @@ import {
   BookText,
   Bot,
   Balloon,
+  SignalLow,
+  User,
+  SignalHigh,
+  SignalMedium,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import Link from "next/link";
 import {
   Card,
   CardAction,
@@ -58,63 +63,77 @@ function ProgressDemo(props: { value: number }) {
 
 export default function Projects() {
   return (
-    <div className="flex flex-col w-4/5 h-9/10 gap-6">
-      <div className="flex gap-4 justify-between">
-        <div>
-          <h1 className="text-4xl pb-3">Projects</h1>
-          <p className="text-secondary">
-            6 projects. 34 total tickets across the workspace.
-          </p>
+    <div className="flex w-full justify-center items-center">
+      <div className="flex w-4/5 flex-col gap-6">
+        <div className="flex gap-4 justify-between">
+          <div>
+            <h1 className="text-4xl pb-3">Projects</h1>
+            <p className="text-secondary">
+              6 projects. 34 total tickets across the workspace.
+            </p>
+          </div>
+          <Button variant="default">
+            <Plus />
+            New issue
+          </Button>
         </div>
-        <Button variant="default">
-          <Plus />
-          New issue
-        </Button>
-      </div>
-      <Separator />
-      <div className="grid grid-cols-3 gap-6">
-        <CardImage
-          icon={Globe}
-          name="WEB"
-          title="Club Website"
-          description="Main marketing site and member portal. Next.js + Vercel."
-          value={12}
-        />
-        <CardImage
-          icon={Keyboard}
-          name="HACK"
-          title="Spring Hackathon"
-          description="Main marketing site and member portal. Next.js + Vercel."
-          value={24}
-        />
-        <CardImage
-          icon={Server}
-          name="INFRA"
-          title="Server Infrastructure"
-          description="Main marketing site and member portal. Next.js + Vercel."
-          value={36}
-        />
-        <CardImage
-          icon={BookText}
-          name="DOCS"
-          title="Onboarding Docs"
-          description="Main marketing site and member portal. Next.js + Vercel."
-          value={48}
-        />
-        <CardImage
-          icon={Bot}
-          name="DISCORD"
-          title="Discord Bot"
-          description="Main marketing site and member portal. Next.js + Vercel."
-          value={60}
-        />
-        <CardImage
-          icon={Balloon}
-          name="SOCIAL"
-          title="Workshop Series"
-          description="Main marketing site and member portal. Next.js + Vercel."
-          value={72}
-        />
+        <Separator />
+        <div className="grid grid-cols-3 gap-6">
+          <Link href="/projects/web">
+            <CardImage
+              icon={Globe}
+              name="WEB"
+              title="Club Website"
+              description="Main marketing site and member portal. Next.js + Vercel."
+              value={12}
+            />
+          </Link>
+          <Link href="/projects/hack">
+            <CardImage
+              icon={Keyboard}
+              name="HACK"
+              title="Spring Hackathon"
+              description="Main marketing site and member portal. Next.js + Vercel."
+              value={24}
+            />
+          </Link>
+          <Link href="/projects/infra">
+            <CardImage
+              icon={Server}
+              name="INFRA"
+              title="Server Infrastructure"
+              description="Main marketing site and member portal. Next.js + Vercel."
+              value={36}
+            />
+          </Link>
+          <Link href="/projects/docs">
+            <CardImage
+              icon={BookText}
+              name="DOCS"
+              title="Onboarding Docs"
+              description="Main marketing site and member portal. Next.js + Vercel."
+              value={48}
+            />
+          </Link>
+          <Link href="/projects/docs">
+            <CardImage
+              icon={Bot}
+              name="DISCORD"
+              title="Discord Bot"
+              description="Main marketing site and member portal. Next.js + Vercel."
+              value={60}
+            />
+          </Link>
+          <Link href="/projects/docs">
+            <CardImage
+              icon={Balloon}
+              name="SOCIAL"
+              title="Workshop Series"
+              description="Main marketing site and member portal. Next.js + Vercel."
+              value={72}
+            />
+          </Link>
+        </div>
       </div>
     </div>
   );

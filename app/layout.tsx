@@ -37,9 +37,9 @@ export default function Layout({
               className="h-full min-h-0 overflow-hidden [--sidebar-mobile-offset:var(--app-header-height)] [--sidebar-mobile-height:calc(100svh-var(--app-header-height))]"
             >
               <AppSidebar />
-              <SidebarInset className="min-h-0 h-full overflow-hidden">
-                <div className="min-h-screen flex justify-center items-center">
-                  {children}
+              <SidebarInset className="min-h-0 h-full">
+                <div className="h-full min-h-0 overflow-y-auto overflow-x-hidden">
+                  <div className="flex min-h-full">{children}</div>
                 </div>
               </SidebarInset>
             </SidebarProvider>
