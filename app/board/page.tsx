@@ -77,7 +77,7 @@ function KanItem({
     <Card className="w-80 shrink-0 rounded-xl pt-0 pb-2 bg-background/80 ">
       <CardHeader className="items-start gap-2 px-4 pt-4">
         <p className="text-left text-sm font-medium text-muted-foreground justify-center align-center  flex">
-          <p>{project}</p>
+          <span>{project}</span>
           <Signal size={15} className="ml-auto" color="orange" />
         </p>
         <CardTitle className="text-left text-md leading-tight text-white">

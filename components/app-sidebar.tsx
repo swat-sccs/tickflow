@@ -17,6 +17,8 @@ import {
   List,
   VenusAndMars,
   Kanban,
+  Users,
+  Settings,
 } from "lucide-react";
 
 const sidebarWorkspace = [
@@ -70,6 +72,19 @@ const sidebarProjects = [
   },
 ];
 
+const sidebarSettings = [
+  {
+    url: "/members",
+    icon: Users,
+    label: "Members",
+  },
+  {
+    url: "/settings",
+    icon: Settings,
+    label: "Settings",
+  },
+];
+
 export function AppSidebar() {
   return (
     <Sidebar className="h-full">
@@ -93,10 +108,27 @@ export function AppSidebar() {
         </SidebarGroup>
         <SidebarGroup>
           <SidebarGroupLabel className="uppercase text-base text-foreground">
-            Projects
+            Settings
           </SidebarGroupLabel>
           <SidebarMenu>
             {sidebarProjects.map((item) => (
+              <SidebarMenuItem key={item.label}>
+                <SidebarMenuButton asChild>
+                  <a href={item.url}>
+                    <item.icon />
+                    <span>{item.label}</span>
+                  </a>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            ))}
+          </SidebarMenu>
+        </SidebarGroup>
+        <SidebarGroup>
+          <SidebarGroupLabel className="uppercase text-base text-foreground">
+            Projects
+          </SidebarGroupLabel>
+          <SidebarMenu>
+            {sidebarSettings.map((item) => (
               <SidebarMenuItem key={item.label}>
                 <SidebarMenuButton asChild>
                   <a href={item.url}>
