@@ -1,13 +1,79 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
-generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
-}
-
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Priority {
+  low
+  medium
+  high
+}
+
+enum Status {
+  backlog
+  todo
+  inprogress
+  done
+  blocked
+  shipped
+}
+
+enum Role {
+  lead
+  member
+}
+
+model User {
+  id             Int              @id @default(autoincrement())
+  email          String           @unique
+  name           String
+  password       String
+  createdAt      DateTime         @default(now())
+  projectMembers ProjectMember[]
+  taskAssignees  TaskAssignee[]
+}
+
+model Project {
+  id             Int              @id @default(autoincrement())
+  slug           String           @unique
+  title          String
+  description    String?
+  members        ProjectMember[]
+  tasks          Task[]
+}
+
+model Task {
+  id            Int            @id @default(autoincrement())
+  title         String
+  description   String?
+  priority      Priority
+  status        Status
+  dueDate       DateTime?
+  createdAt     DateTime       @default(now())
+  project       Project        @relation(fields: [projectId], references: [id])
+  projectId     Int
+  assignees     TaskAssignee[]
+}
+
+model ProjectMember {
+  user      User    @relation(fields: [userId], references: [id])
+  userId    Int
+  project   Project @relation(fields: [projectId], references: [id])
+  projectId Int
+  role      Role
+
+  @@id([userId, projectId])
+}
+
+model TaskAssignee {
+  task   Task @relation(fields: [taskId], references: [id])
+  taskId Int
+  user   User @relation(fields: [userId], references: [id])
+  userId Int
+
+  @@id([taskId, userId])
 }
