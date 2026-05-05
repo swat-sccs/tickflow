@@ -19,6 +19,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { CardImage } from "@/app/page";
+import { notFound } from "next/navigation";
 
 import React from "react";
 
@@ -293,19 +294,29 @@ function TeamTable({
   );
 }
 
-export default async function ProjectItem({ params }) {
+type ProjectItemProps = {
+  params: Promise<{
+    proj_id: string;
+  }>;
+};
+
+export default async function ProjectItem({ params }: ProjectItemProps) {
   const { proj_id } = await params;
   const project = projects.find((item) => item.slug === proj_id);
-  console.log(project);
+
+  if (!project) {
+    notFound();
+  }
+
   return (
     <div className="w-[90%] flex flex-col gap-10 mx-auto">
       <div>
-        <span className="text-secondary">projects</span> &gt; {project?.slug}
+        <span className="text-secondary">projects</span> &gt; {project.slug}
       </div>
       <div className="flex w-full justify-between">
         <div>
-          <h1 className="text-3xl">Club Website</h1>
-          <p className="text-secondary">{project?.descr}</p>
+          <h1 className="text-3xl">{project.title}</h1>
+          <p className="text-secondary">{project.descr}</p>
         </div>
         <div className="flex items-center gap-2">
           <Button className="bg-background text-foreground border-">
@@ -327,10 +338,10 @@ export default async function ProjectItem({ params }) {
         <CardImage text="Shipped" number={project.numbers.shipped} />
       </div>
       <div>
-        <IssuesTable issues={project?.issue} />
+        <IssuesTable issues={project.issue} />
       </div>
       <div>
-        <TeamTable team={project?.team} issues={project?.issue} />
+        <TeamTable team={project.team} issues={project.issue} />
       </div>
     </div>
   );
