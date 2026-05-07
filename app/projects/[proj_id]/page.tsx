@@ -21,8 +21,6 @@ import {
 import { CardImage } from "@/app/page";
 import { notFound } from "next/navigation";
 
-import React from "react";
-
 type projectInfo = {
   slug: string;
   title: string;
@@ -319,7 +317,7 @@ export default async function ProjectItem({ params }: ProjectItemProps) {
           <p className="text-secondary">{project.descr}</p>
         </div>
         <div className="flex items-center gap-2">
-          <Button className="bg-background text-foreground border-">
+          <Button className="bg-background text-foreground border">
             <Users />
             Invite
           </Button>

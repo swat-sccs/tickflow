@@ -41,7 +41,7 @@ model Project {
   id             Int              @id @default(autoincrement())
   slug           String           @unique
   title          String
-  description    String?
+  description    String
   members        ProjectMember[]
   tasks          Task[]
 }
