@@ -6,20 +6,16 @@ import { Separator } from "@/components/ui/separator";
 import {
   LucideIcon,
   Plus,
-  ArrowRight,
   Globe,
   Keyboard,
   Server,
   BookText,
   Bot,
   Balloon,
-  SignalLow,
-  User,
-  SignalHigh,
-  SignalMedium,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
+import { NewTicketDialog } from "@/components/new-ticket-dialog";
 import {
   Card,
   CardAction,
@@ -72,10 +68,12 @@ export default function Projects() {
               6 projects. 34 total tickets across the workspace.
             </p>
           </div>
-          <Button variant="default">
-            <Plus />
-            New issue
-          </Button>
+          <NewTicketDialog>
+            <Button variant="default">
+              <Plus />
+              New issue
+            </Button>
+          </NewTicketDialog>
         </div>
         <Separator />
         <div className="grid grid-cols-3 gap-6">

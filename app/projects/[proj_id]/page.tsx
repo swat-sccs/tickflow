@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/table";
 import { CardImage } from "@/app/page";
 import { notFound } from "next/navigation";
+import { NewTicketDialog } from "@/components/new-ticket-dialog";
 
 type projectInfo = {
   slug: string;
@@ -321,10 +322,12 @@ export default async function ProjectItem({ params }: ProjectItemProps) {
             <Users />
             Invite
           </Button>
-          <Button>
-            <Plus />
-            New Issue
-          </Button>
+          <NewTicketDialog>
+            <Button>
+              <Plus />
+              New Issue
+            </Button>
+          </NewTicketDialog>
         </div>
       </div>
       <div className="flex">

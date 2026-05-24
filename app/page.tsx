@@ -8,12 +8,9 @@ import {
   SignalMedium,
 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
-import { Badge } from "@/components/ui/badge";
 import {
   Card,
-  CardAction,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -22,11 +19,12 @@ import {
   TableBody,
   TableCaption,
   TableCell,
-  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+
+import {NewTicketDialog} from '@/components/new-ticket-dialog'
 
 const table = [
   {
@@ -44,6 +42,7 @@ const table = [
     due: "May 1",
   },
 ];
+
 
 const priorityIcons = {
   LOW: SignalLow,
@@ -113,10 +112,12 @@ export default function Home() {
             3 open issues on your plate, across 2 projects
           </p>
           <div className="flex gap-2">
-            <Button variant="default">
-              <Plus />
-              New issue
-            </Button>
+            <NewTicketDialog>
+              <Button variant="default">
+                <Plus />
+                New issue
+              </Button>
+            </NewTicketDialog>
             <Button variant="outline">
               View my issues
               <ArrowRight />
