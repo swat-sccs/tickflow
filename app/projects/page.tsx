@@ -1,8 +1,6 @@
-"use client";
-
-import React from "react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import {prisma} from '@/lib/prisma'
 import {
   LucideIcon,
   Plus,
@@ -52,12 +50,12 @@ function CardImage(props: {
 }
 
 function ProgressDemo(props: { value: number }) {
-  const [progress, setProgress] = React.useState(props.value);
-
-  return <Progress value={progress} className="w-[100%]" />;
+  return <Progress value={props.value} className="w-[100%]" />;
 }
 
-export default function Projects() {
+export default async function Projects() {
+  const projects = await prisma.project.findMany()
+  console.log("here it isssss: ", projects);
   return (
     <div className="flex w-full justify-center items-center">
       <div className="flex w-4/5 flex-col gap-6">
@@ -79,60 +77,17 @@ export default function Projects() {
         </div>
         <Separator />
         <div className="grid grid-cols-3 gap-6">
-          <Link href="/projects/web">
-            <CardImage
-              icon={Globe}
-              name="WEB"
-              title="Club Website"
-              description="Main marketing site and member portal. Next.js + Vercel."
-              value={12}
-            />
-          </Link>
-          <Link href="/projects/hack">
-            <CardImage
-              icon={Keyboard}
-              name="HACK"
-              title="Spring Hackathon"
-              description="Main marketing site and member portal. Next.js + Vercel."
-              value={24}
-            />
-          </Link>
-          <Link href="/projects/infra">
-            <CardImage
-              icon={Server}
-              name="INFRA"
-              title="Server Infrastructure"
-              description="Main marketing site and member portal. Next.js + Vercel."
-              value={36}
-            />
-          </Link>
-          <Link href="/projects/docs">
-            <CardImage
-              icon={BookText}
-              name="DOCS"
-              title="Onboarding Docs"
-              description="Main marketing site and member portal. Next.js + Vercel."
-              value={48}
-            />
-          </Link>
-          <Link href="/projects/docs">
-            <CardImage
-              icon={Bot}
-              name="DISCORD"
-              title="Discord Bot"
-              description="Main marketing site and member portal. Next.js + Vercel."
-              value={60}
-            />
-          </Link>
-          <Link href="/projects/docs">
-            <CardImage
-              icon={Balloon}
-              name="SOCIAL"
-              title="Workshop Series"
-              description="Main marketing site and member portal. Next.js + Vercel."
-              value={72}
-            />
-          </Link>
+          {projects.map(item => (
+        <Link href={`/projects/${item.slug}`} key={item.id}>
+          <CardImage
+            icon={Globe}
+            name={item.slug}
+            title={item.title}
+            description={item.description}
+            value={12}
+          />
+        </Link>
+))}
         </div>
       </div>
     </div>

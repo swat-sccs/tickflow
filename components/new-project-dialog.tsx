@@ -13,6 +13,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import {createProject} from '@/actions/actions'
 
 export function NewProjectDialog({ children }: { children: React.ReactNode }) {
   return (
@@ -22,7 +23,7 @@ export function NewProjectDialog({ children }: { children: React.ReactNode }) {
         <DialogHeader>
           <DialogTitle>New Project</DialogTitle>
         </DialogHeader>
-        <form className="flex flex-col gap-4">
+        <form className="flex flex-col gap-4" action = {createProject}>
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="slug">Slug</Label>
             <Input id="slug" name="slug" placeholder="WEB" />
