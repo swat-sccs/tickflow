@@ -32,8 +32,7 @@ function CardImage(props: {
   value: number;
 }) {
   return (
-    <Card className="relative mx-auto w-full max-w-sm pt-0 rounded-2xl">
-      <div className="absolute inset-0 z-30 aspect-video bg-black/35" />
+    <Card className="mx-auto w-full max-w-sm pt-0 rounded-2xl">
       <props.icon />
       <CardHeader>
         <CardAction>
@@ -60,8 +59,7 @@ export default async function Projects() {
   ]);
   const totalTickets = projects.reduce((sum, p) => sum + p.tasks.length, 0);
   return (
-    <div className="flex w-full justify-center items-center">
-      <div className="flex w-4/5 flex-col gap-6">
+    <div className="w-[90%] mx-auto flex flex-col gap-6 py-10">
         <div className="flex gap-4 justify-between">
           <div>
             <h1 className="text-4xl pb-3">Projects</h1>
@@ -96,7 +94,6 @@ export default async function Projects() {
             );
           })}
         </div>
-      </div>
     </div>
   );
 }

@@ -33,7 +33,7 @@ function initials(name: string) {
 
 function KanItem({ task }: { task: Task }) {
   return (
-    <Card className="w-72 shrink-0 rounded-xl pt-0 pb-2 bg-background/80">
+    <Card className="w-full rounded-xl pt-0 pb-2 bg-background/80">
       <CardHeader className="items-start gap-1.5 px-4 pt-4">
         <p className="flex w-full items-center text-xs font-medium text-muted-foreground">
           <span className="truncate">{task.project.title}</span>
@@ -60,16 +60,16 @@ function KanItem({ task }: { task: Task }) {
 
 function KanColumn({ label, color, tasks }: { label: string; color: string; tasks: Task[] }) {
   return (
-    <Card className="h-full w-72 shrink-0 rounded-2xl pt-2 flex flex-col">
+    <Card className="rounded-2xl pt-2 flex flex-col min-w-0">
       <CardHeader className="flex flex-row items-center gap-0 pl-2 shrink-0">
-        <div className="flex items-center gap-0">
-          <Dot size={46} color={color} />
-          <CardTitle className="-ml-2 text-sm">{label}</CardTitle>
-          <span className="ml-1.5 text-xs text-muted-foreground">({tasks.length})</span>
+        <div className="flex items-center gap-0 min-w-0">
+          <Dot size={46} color={color} className="shrink-0" />
+          <CardTitle className="-ml-2 text-sm truncate">{label}</CardTitle>
+          <span className="ml-1.5 text-xs text-muted-foreground shrink-0">({tasks.length})</span>
         </div>
-        <Plus size={16} className="ml-auto text-muted-foreground" />
+        <Plus size={16} className="ml-auto shrink-0 text-muted-foreground" />
       </CardHeader>
-      <CardContent className="flex flex-col gap-3 px-2 py-3 overflow-y-auto flex-1">
+      <CardContent className="flex flex-col gap-3 px-2 py-3">
         {tasks.map(task => <KanItem key={task.id} task={task} />)}
         {tasks.length === 0 && (
           <p className="text-xs text-muted-foreground text-center py-4">No tickets</p>
@@ -93,19 +93,17 @@ export default async function Board() {
   ) as Record<Status, Task[]>;
 
   return (
-    <div className="flex h-full w-full min-w-0 flex-col gap-6 overflow-hidden px-6 py-6">
+    <div className="flex w-full flex-col gap-6 px-6 py-8">
       <h1 className="text-4xl font-bold">Board</h1>
-      <div className="min-h-0 flex-1 overflow-x-auto overflow-y-hidden pb-2">
-        <div className="flex h-full w-max gap-4">
-          {columns.map(col => (
-            <KanColumn
-              key={col.status}
-              label={col.label}
-              color={col.color}
-              tasks={grouped[col.status]}
-            />
-          ))}
-        </div>
+      <div className="grid grid-cols-6 gap-3 items-start">
+        {columns.map(col => (
+          <KanColumn
+            key={col.status}
+            label={col.label}
+            color={col.color}
+            tasks={grouped[col.status]}
+          />
+        ))}
       </div>
     </div>
   );
