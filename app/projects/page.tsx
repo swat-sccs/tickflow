@@ -32,7 +32,7 @@ function CardImage(props: {
   value: number;
 }) {
   return (
-    <Card className="relative mx-auto w-full max-w-sm pt-0">
+    <Card className="relative mx-auto w-full max-w-sm pt-0 rounded-2xl">
       <div className="absolute inset-0 z-30 aspect-video bg-black/35" />
       <props.icon />
       <CardHeader>
