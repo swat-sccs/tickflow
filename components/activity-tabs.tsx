@@ -12,6 +12,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Status } from "@prisma/client";
+import { StatusSelect } from "@/components/status-select";
 import Link from "next/link";
 
 const statusVariant: Record<Status, "secondary" | "outline" | "destructive" | "default"> = {
@@ -111,9 +112,7 @@ export function ActivityTabs({
                     </Link>
                   </TableCell>
                   <TableCell>
-                    <Badge variant={statusVariant[task.status]}>
-                      {statusLabel[task.status]}
-                    </Badge>
+                    <StatusSelect taskId={task.id} status={task.status} />
                   </TableCell>
                   <TableCell>
                     {task.assignees.length === 0 ? (

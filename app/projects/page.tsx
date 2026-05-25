@@ -1,22 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import {prisma} from '@/lib/prisma'
-import {
-  LucideIcon,
-  Plus,
-  Globe,
-  Keyboard,
-  Server,
-  BookText,
-  Bot,
-  Balloon,
-} from "lucide-react";
+import { prisma } from "@/lib/prisma";
+import { Plus } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { ProjectIcon } from "@/lib/project-icons";
 import Link from "next/link";
 import { NewProjectDialog } from "@/components/new-project-dialog";
 import {
   Card,
-  CardAction,
   CardDescription,
   CardFooter,
   CardHeader,
@@ -24,32 +15,39 @@ import {
 } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 
-function CardImage(props: {
-  icon: LucideIcon;
+function ProjectCard(props: {
+  icon: string;
   name: string;
   title: string;
   description: string;
-  value: number;
+  progress: number;
+  taskCount: number;
 }) {
   return (
-    <Card className="mx-auto w-full max-w-sm pt-0 rounded-2xl">
-      <props.icon />
-      <CardHeader>
-        <CardAction>
-          <Badge variant="secondary">{props.name}</Badge>
-        </CardAction>
-        <CardTitle>{props.title}</CardTitle>
-        <CardDescription>{props.description}</CardDescription>
+    <Card className="w-full flex flex-col gap-0 rounded-2xl hover:shadow-md transition-shadow">
+      <CardHeader className="pb-3">
+        <div className="flex items-start justify-between mb-3">
+          <div className="flex items-center justify-center size-9 rounded-lg bg-muted">
+            <ProjectIcon name={props.icon} className="size-4 text-muted-foreground" />
+          </div>
+          <Badge variant="secondary" className="font-mono text-xs uppercase tracking-wide">
+            {props.name}
+          </Badge>
+        </div>
+        <CardTitle className="text-base leading-snug">{props.title}</CardTitle>
+        <CardDescription className="text-sm line-clamp-2 min-h-[2.5rem]">
+          {props.description}
+        </CardDescription>
       </CardHeader>
-      <CardFooter>
-        <ProgressDemo value={props.value} />
+      <CardFooter className="flex flex-col items-start gap-1.5 pt-0">
+        <div className="flex w-full justify-between text-xs text-muted-foreground">
+          <span>{props.taskCount} {props.taskCount === 1 ? "ticket" : "tickets"}</span>
+          <span>{props.progress}% done</span>
+        </div>
+        <Progress value={props.progress} className="h-1.5 w-full" />
       </CardFooter>
     </Card>
   );
-}
-
-function ProgressDemo(props: { value: number }) {
-  return <Progress value={props.value} className="w-[100%]" />;
 }
 
 export default async function Projects() {
@@ -83,12 +81,13 @@ export default async function Projects() {
             const progress = item.tasks.length > 0 ? Math.round((done / item.tasks.length) * 100) : 0;
             return (
               <Link href={`/projects/${item.slug}`} key={item.id}>
-                <CardImage
-                  icon={Globe}
+                <ProjectCard
+                  icon={item.icon}
                   name={item.slug}
                   title={item.title}
                   description={item.description}
-                  value={progress}
+                  progress={progress}
+                  taskCount={item.tasks.length}
                 />
               </Link>
             );

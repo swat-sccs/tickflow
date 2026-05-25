@@ -9,31 +9,14 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Priority, Status } from "@prisma/client";
+import { StatusSelect } from "@/components/status-select";
+import { Priority } from "@prisma/client";
 import Link from "next/link";
 
 const priorityIcon: Record<Priority, React.ReactNode> = {
   low:    <SignalLow    className="size-4 text-green-500" />,
   medium: <SignalMedium className="size-4 text-orange-500" />,
   high:   <SignalHigh   className="size-4 text-red-500" />,
-};
-
-const statusLabel: Record<Status, string> = {
-  backlog:    "Backlog",
-  todo:       "Todo",
-  inprogress: "In Progress",
-  done:       "Done",
-  blocked:    "Blocked",
-  shipped:    "Shipped",
-};
-
-const statusVariant: Record<Status, "secondary" | "outline" | "destructive" | "default"> = {
-  backlog:    "outline",
-  todo:       "secondary",
-  inprogress: "default",
-  done:       "secondary",
-  blocked:    "destructive",
-  shipped:    "secondary",
 };
 
 export default async function MyIssues() {
@@ -100,9 +83,7 @@ export default async function MyIssues() {
                   </div>
                 </TableCell>
                 <TableCell>
-                  <Badge variant={statusVariant[task.status]}>
-                    {statusLabel[task.status]}
-                  </Badge>
+                  <StatusSelect taskId={task.id} status={task.status} />
                 </TableCell>
                 <TableCell>
                   <span className="inline-flex items-center gap-1.5 text-sm">

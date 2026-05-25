@@ -90,7 +90,7 @@ export default async function Board() {
 
   const grouped = Object.fromEntries(
     columns.map(col => [col.status, tasks.filter(t => t.status === col.status)])
-  ) as Record<Status, Task[]>;
+  ) as unknown as Record<Status, Task[]>;
 
   return (
     <div className="flex w-full flex-col gap-6 px-6 py-8">

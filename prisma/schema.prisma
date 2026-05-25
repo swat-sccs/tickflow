@@ -41,6 +41,7 @@ model Project {
   slug           String           @unique
   title          String
   description    String
+  icon           String           @default("Globe")
   members        ProjectMember[]
   tasks          Task[]
 }

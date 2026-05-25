@@ -9,6 +9,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { StatusSelect } from "@/components/status-select";
 import { notFound } from "next/navigation";
 import { NewTicketDialog } from "@/components/new-ticket-dialog";
 import { prisma } from "@/lib/prisma";
@@ -145,9 +146,7 @@ export default async function ProjectItem({ params }: ProjectItemProps) {
                   </div>
                 </TableCell>
                 <TableCell>
-                  <Badge variant={statusVariant[task.status]}>
-                    {statusLabel[task.status]}
-                  </Badge>
+                  <StatusSelect taskId={task.id} status={task.status} />
                 </TableCell>
                 <TableCell>
                   <span className="inline-flex items-center gap-1.5 text-sm">

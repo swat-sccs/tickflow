@@ -32,10 +32,16 @@ export async function createTask(formData: FormData) {
     revalidatePath('/projects')
 }
 
+export async function updateTaskStatus(taskId: number, status: Status) {
+    await prisma.task.update({ where: { id: taskId }, data: { status } })
+    revalidatePath('/', 'layout')
+}
+
 export async function createProject(formData: FormData){
     const slug = formData.get('slug') as string
     const title = formData.get('title') as string
     const description = formData.get('description') as string
+    const icon = (formData.get('icon') as string) || 'Globe'
     const memberIds = formData.getAll('memberIds').map(Number).filter(Boolean)
 
     await prisma.project.create({
@@ -43,6 +49,7 @@ export async function createProject(formData: FormData){
             slug,
             title,
             description,
+            icon,
             members: {
                 create: memberIds.map(userId => ({ userId, role: 'member' })),
             },
