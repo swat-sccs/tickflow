@@ -1,132 +1,109 @@
-"use client";
-
-import { Dot, MessageSquare, Signal, Plus } from "lucide-react";
+import { prisma } from "@/lib/prisma";
+import { Dot, Plus, SignalHigh, SignalMedium, SignalLow } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import {
-  Avatar,
-  AvatarBadge,
-  AvatarFallback,
-  AvatarGroup,
-  AvatarGroupCount,
-  AvatarImage,
-} from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarGroup } from "@/components/ui/avatar";
+import { Priority, Status } from "@prisma/client";
 
-const dummyCards = [
-  { title: "Backlog" },
-  { title: "Todo" },
-  { title: "In Progress" },
-  { title: "Done" },
-  { title: "Blocked" },
-  { title: "Shipped" },
-];
-const dummyItems = [
-  {
-    title: "Implement login page",
-    description:
-      "Create a responsive login page with email and password fields.",
-    project: "Club Website",
-  },
-  {
-    title: "Design database schema",
-    description:
-      "Design the database schema for the new project management feature.",
-    project: "Spring Hackathon",
-  },
-  {
-    title: "Set up CI/CD pipeline",
-    description:
-      "Set up a CI/CD pipeline for automated testing and deployment.",
-    project: "Club Website",
-  },
-];
-
-//TODO: FIX TYPES with items from actual data
-function KanCard({ title, items }: { title: string; items: any[] }) {
-  return (
-    <Card className="h-full shrink-0 rounded-2xl pt-2">
-      <CardHeader className="flex flex-row items-center gap-0 pl-2">
-        <div className="flex items-center justify-start gap-0">
-          <Dot size={50} color="lightblue" />
-          <CardTitle className="-ml-2.5">{title}</CardTitle>
-        </div>
-        <Plus size={20} color="lightgray" className="ml-auto" />
-      </CardHeader>
-      <CardContent className="flex flex-col gap-4 px-2 py-4">
-        {items.map((item) => (
-          <KanItem
-            key={item.title}
-            title={item.title}
-            description={item.description}
-            project={item.project}
-          />
-        ))}
-      </CardContent>
-    </Card>
-  );
-}
-function KanItem({
-  title,
-  project,
-  description,
-}: {
+type Task = {
+  id: number;
   title: string;
-  project: string;
-  description: string;
-}) {
+  priority: Priority;
+  project: { title: string };
+  assignees: { user: { name: string } }[];
+};
+
+const columns: { status: Status; label: string; color: string }[] = [
+  { status: "backlog",   label: "Backlog",     color: "#94a3b8" },
+  { status: "todo",      label: "Todo",        color: "#60a5fa" },
+  { status: "inprogress",label: "In Progress", color: "#fbbf24" },
+  { status: "blocked",   label: "Blocked",     color: "#f87171" },
+  { status: "done",      label: "Done",        color: "#34d399" },
+  { status: "shipped",   label: "Shipped",     color: "#a78bfa" },
+];
+
+const priorityIcon: Record<Priority, React.ReactNode> = {
+  low:    <SignalLow  className="size-3.5 text-green-500" />,
+  medium: <SignalMedium className="size-3.5 text-orange-500" />,
+  high:   <SignalHigh  className="size-3.5 text-red-500" />,
+};
+
+function initials(name: string) {
+  return name.split(" ").map(w => w[0]).join("").toUpperCase().slice(0, 2);
+}
+
+function KanItem({ task }: { task: Task }) {
   return (
-    <Card className="w-80 shrink-0 rounded-xl pt-0 pb-2 bg-background/80 ">
-      <CardHeader className="items-start gap-2 px-4 pt-4">
-        <p className="text-left text-sm font-medium text-muted-foreground justify-center align-center  flex">
-          <span>{project}</span>
-          <Signal size={15} className="ml-auto" color="orange" />
+    <Card className="w-72 shrink-0 rounded-xl pt-0 pb-2 bg-background/80">
+      <CardHeader className="items-start gap-1.5 px-4 pt-4">
+        <p className="flex w-full items-center text-xs font-medium text-muted-foreground">
+          <span className="truncate">{task.project.title}</span>
+          <span className="ml-auto">{priorityIcon[task.priority]}</span>
         </p>
-        <CardTitle className="text-left text-md leading-tight text-white">
-          {title}
-        </CardTitle>
+        <CardTitle className="text-sm leading-snug">{task.title}</CardTitle>
       </CardHeader>
-      <CardContent className="px-4 pb-2">
-        <div className="flex justify-between align-center">
-          <AvatarGroup className="">
-            <Avatar>
-              <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-              <AvatarFallback>CN</AvatarFallback>
-            </Avatar>
-            <Avatar>
-              <AvatarImage
-                src="https://github.com/maxleiter.png"
-                alt="@maxleiter"
-              />
-              <AvatarFallback>LR</AvatarFallback>
-            </Avatar>
-            <Avatar>
-              <AvatarImage
-                src="https://github.com/evilrabbit.png"
-                alt="@evilrabbit"
-              />
-              <AvatarFallback>ER</AvatarFallback>
-            </Avatar>
-            <AvatarGroupCount>+3</AvatarGroupCount>
+      {task.assignees.length > 0 && (
+        <CardContent className="px-4 pb-0">
+          <AvatarGroup>
+            {task.assignees.slice(0, 4).map(a => (
+              <Avatar key={a.user.name} size="sm">
+                <AvatarFallback className="text-[10px]">
+                  {initials(a.user.name)}
+                </AvatarFallback>
+              </Avatar>
+            ))}
           </AvatarGroup>
-          <div className="flex items-center gap-1 text-sm text-muted-foreground">
-            <MessageSquare size={15} />
-            <div>2</div>
-          </div>
-        </div>
-      </CardContent>
-      {/* pinned bottom right of card item*/}
+        </CardContent>
+      )}
     </Card>
   );
 }
 
-export default function Home() {
+function KanColumn({ label, color, tasks }: { label: string; color: string; tasks: Task[] }) {
+  return (
+    <Card className="h-full w-72 shrink-0 rounded-2xl pt-2 flex flex-col">
+      <CardHeader className="flex flex-row items-center gap-0 pl-2 shrink-0">
+        <div className="flex items-center gap-0">
+          <Dot size={46} color={color} />
+          <CardTitle className="-ml-2 text-sm">{label}</CardTitle>
+          <span className="ml-1.5 text-xs text-muted-foreground">({tasks.length})</span>
+        </div>
+        <Plus size={16} className="ml-auto text-muted-foreground" />
+      </CardHeader>
+      <CardContent className="flex flex-col gap-3 px-2 py-3 overflow-y-auto flex-1">
+        {tasks.map(task => <KanItem key={task.id} task={task} />)}
+        {tasks.length === 0 && (
+          <p className="text-xs text-muted-foreground text-center py-4">No tickets</p>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
+export default async function Board() {
+  const tasks = await prisma.task.findMany({
+    include: {
+      project: { select: { title: true } },
+      assignees: { include: { user: { select: { name: true } } } },
+    },
+    orderBy: { createdAt: "desc" },
+  });
+
+  const grouped = Object.fromEntries(
+    columns.map(col => [col.status, tasks.filter(t => t.status === col.status)])
+  ) as Record<Status, Task[]>;
+
   return (
     <div className="flex h-full w-full min-w-0 flex-col gap-6 overflow-hidden px-6 py-6">
       <h1 className="text-4xl font-bold">Board</h1>
-
       <div className="min-h-0 flex-1 overflow-x-auto overflow-y-hidden pb-2">
-        <div className="flex h-11/12 w-max gap-5">
-          {dummyCards.map((card) => (
-            <KanCard key={card.title} title={card.title} items={dummyItems} />
+        <div className="flex h-full w-max gap-4">
+          {columns.map(col => (
+            <KanColumn
+              key={col.status}
+              label={col.label}
+              color={col.color}
+              tasks={grouped[col.status]}
+            />
           ))}
         </div>
       </div>

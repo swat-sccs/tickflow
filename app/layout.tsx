@@ -6,6 +6,7 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { Raleway } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 
@@ -24,6 +25,13 @@ export default function Layout({
       <body
         className={`${raleway.variable} flex h-svh flex-col bg-background text-foreground font-sans [--app-header-height:3.5rem]`}
       >
+        <Script id="theme-init" strategy="beforeInteractive">{`
+          try {
+            const t = localStorage.getItem('theme');
+            const dark = t === 'dark' || (!t && window.matchMedia('(prefers-color-scheme: dark)').matches);
+            if (dark) document.documentElement.classList.add('dark');
+          } catch {}
+        `}</Script>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

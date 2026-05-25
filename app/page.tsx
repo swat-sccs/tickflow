@@ -1,93 +1,11 @@
-"use client";
 import { Button } from "@/components/ui/button";
-import {
-  ArrowRight,
-  Plus,
-  SignalHigh,
-  SignalLow,
-  SignalMedium,
-} from "lucide-react";
+import { ArrowRight, Plus } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
-import {
-  Card,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-
-import {NewTicketDialog} from '@/components/new-ticket-dialog'
-
-const table = [
-  {
-    key: "WEB",
-    title: "Members directory page",
-    status: "In progress",
-    priority: "LOW",
-    due: "May 8",
-  },
-  {
-    key: "HACK",
-    title: "Request money for hackathon from SBC",
-    status: "In progress",
-    priority: "HIGH",
-    due: "May 1",
-  },
-];
-
-
-const priorityIcons = {
-  LOW: SignalLow,
-  MEDIUM: SignalMedium,
-  HIGH: SignalHigh,
-} as const;
-
-export function TableDemo() {
-  return (
-    <Table>
-      <TableCaption>Assigned to you.</TableCaption>
-      <TableHeader>
-        <TableRow>
-          <TableHead className="w-[100px]">Project</TableHead>
-          <TableHead>Status</TableHead>
-          <TableHead>Method</TableHead>
-          <TableHead>Priority</TableHead>
-          <TableHead>Due Date</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {table.map((item) => {
-          const PriorityIcon =
-            priorityIcons[item.priority as keyof typeof priorityIcons] ??
-            SignalLow;
-
-          return (
-            <TableRow key={item.title}>
-              <TableCell className="font-medium">{item.key}</TableCell>
-              <TableCell>{item.title}</TableCell>
-              <TableCell>{item.status}</TableCell>
-              <TableCell>
-                <span className="inline-flex items-center gap-2">
-                  <PriorityIcon className="size-4" aria-hidden="true" />
-                  {item.priority}
-                </span>
-              </TableCell>
-              <TableCell className="text-right">{item.due}</TableCell>
-            </TableRow>
-          );
-        })}
-      </TableBody>
-    </Table>
-  );
-}
+import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { NewTicketDialog } from "@/components/new-ticket-dialog";
+import { ProjectStatusChart } from "@/components/project-status-chart";
+import { prisma } from "@/lib/prisma";
+import Link from "next/link";
 
 export function CardImage(props: { text: string; number: number }) {
   return (
@@ -102,42 +20,75 @@ export function CardImage(props: { text: string; number: number }) {
   );
 }
 
-export default function Home() {
+export default async function Home() {
+  const [projectsWithTasks, users, totalOpen, inProgress, closed] = await Promise.all([
+    prisma.project.findMany({
+      select: {
+        id: true, slug: true, title: true,
+        tasks: { select: { status: true } },
+      },
+    }),
+    prisma.user.findMany({ select: { id: true, name: true, email: true } }),
+    prisma.task.count({ where: { status: { notIn: ["done", "shipped"] } } }),
+    prisma.task.count({ where: { status: "inprogress" } }),
+    prisma.task.count({ where: { status: { in: ["done", "shipped"] } } }),
+  ]);
+
+  const total = totalOpen + closed;
+
+  const projects = projectsWithTasks.map(p => ({
+    id: p.id, slug: p.slug, title: p.title,
+  }));
+
+  const chartData = projectsWithTasks.map(p => ({
+    name: p.slug.toUpperCase(),
+    backlog:    p.tasks.filter(t => t.status === "backlog").length,
+    todo:       p.tasks.filter(t => t.status === "todo").length,
+    inprogress: p.tasks.filter(t => t.status === "inprogress").length,
+    blocked:    p.tasks.filter(t => t.status === "blocked").length,
+    done:       p.tasks.filter(t => t.status === "done").length,
+    shipped:    p.tasks.filter(t => t.status === "shipped").length,
+  }));
+
   return (
-    <div className="flex justify-center items-center">
-      <div className="flex flex-col w-4/5 h-9/10 gap-6">
+    <div className="w-[90%] mx-auto flex flex-col gap-6 py-10">
         <div className="flex flex-col gap-4 justify-left">
           <h1 className="text-4xl">Hello, Damian.</h1>
           <p className="text-secondary">
-            3 open issues on your plate, across 2 projects
+            {totalOpen} open {totalOpen === 1 ? "issue" : "issues"} across {projects.length} {projects.length === 1 ? "project" : "projects"}
           </p>
           <div className="flex gap-2">
-            <NewTicketDialog>
+            <NewTicketDialog projects={projects} users={users}>
               <Button variant="default">
                 <Plus />
                 New issue
               </Button>
             </NewTicketDialog>
-            <Button variant="outline">
-              View my issues
-              <ArrowRight />
-            </Button>
+            <Link href="/issues">
+              <Button variant="outline">
+                View all issues
+                <ArrowRight />
+              </Button>
+            </Link>
           </div>
         </div>
         <Separator />
         <div className="flex flex-col gap-6">
           <div className="flex">
-            <CardImage text="Total open" number={28} />
-            <CardImage text="Assigned to me" number={3} />
-            <CardImage text="In progress" number={2} />
-            <CardImage text="Closed" number={6} />
+            <CardImage text="Total open" number={totalOpen} />
+            <CardImage text="Total tasks" number={total} />
+            <CardImage text="In progress" number={inProgress} />
+            <CardImage text="Closed" number={closed} />
           </div>
-          <div className="flex gap-2">
-            <TableDemo />
-            <TableDemo />
+          <div className="flex flex-col gap-4">
+            <h2 className="text-lg font-semibold">Ticket status by project</h2>
+            {Array.from({ length: Math.ceil(chartData.length / 4) || 1 }, (_, i) =>
+              chartData.slice(i * 4, i * 4 + 4)
+            ).map((chunk, i) => (
+              <ProjectStatusChart key={i} data={chunk} />
+            ))}
           </div>
         </div>
-      </div>
     </div>
   );
 }

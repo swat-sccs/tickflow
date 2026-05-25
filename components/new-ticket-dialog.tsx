@@ -13,27 +13,49 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { projects } from "@/lib/projects";
+import { useState } from "react";
+import { createTask } from "@/actions/actions";
+import { UserMultiSelect } from "@/components/user-multi-select";
 
-export function NewTicketDialog({ children }: { children: React.ReactNode }) {
+type Project = { id: number; slug: string; title: string };
+type User = { id: number; name: string; email: string };
+
+export function NewTicketDialog({
+  children,
+  projects,
+  users,
+}: {
+  children: React.ReactNode;
+  projects: Project[];
+  users: User[];
+}) {
+  const [open, setOpen] = useState(false);
+  const [formKey, setFormKey] = useState(0);
+
+  const handleAction = async (formData: FormData) => {
+    await createTask(formData);
+    setFormKey((k) => k + 1);
+    setOpen(false);
+  };
+
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>New Ticket</DialogTitle>
         </DialogHeader>
-        <form className="flex flex-col gap-4">
+        <form key={formKey} className="flex flex-col gap-4" action={handleAction}>
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="project">Project</Label>
             <select
               id="project"
-              name="projectSlug"
+              name="projectId"
               className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
             >
               {projects.map((p) => (
-                <option key={p.slug} value={p.slug}>
-                  {p.name} — {p.title}
+                <option key={p.id} value={p.id}>
+                  {p.slug} — {p.title}
                 </option>
               ))}
             </select>
@@ -78,6 +100,10 @@ export function NewTicketDialog({ children }: { children: React.ReactNode }) {
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="dueDate">Due Date</Label>
             <Input id="dueDate" name="dueDate" type="date" />
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <Label>Assignees</Label>
+            <UserMultiSelect users={users} name="assigneeIds" placeholder="Search assignees..." />
           </div>
           <DialogFooter>
             <DialogClose asChild>

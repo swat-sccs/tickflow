@@ -54,8 +54,11 @@ function ProgressDemo(props: { value: number }) {
 }
 
 export default async function Projects() {
-  const projects = await prisma.project.findMany()
-  console.log("here it isssss: ", projects);
+  const [projects, users] = await Promise.all([
+    prisma.project.findMany({ include: { tasks: { select: { status: true } } } }),
+    prisma.user.findMany({ select: { id: true, name: true, email: true } }),
+  ]);
+  const totalTickets = projects.reduce((sum, p) => sum + p.tasks.length, 0);
   return (
     <div className="flex w-full justify-center items-center">
       <div className="flex w-4/5 flex-col gap-6">
@@ -63,11 +66,11 @@ export default async function Projects() {
           <div>
             <h1 className="text-4xl pb-3">Projects</h1>
             <p className="text-secondary">
-              6 projects. 34 total tickets across the workspace.
+              {projects.length} {projects.length === 1 ? "project" : "projects"}. {totalTickets} total {totalTickets === 1 ? "ticket" : "tickets"} across the workspace.
             </p>
           </div>
           <div className="flex">
-          <NewProjectDialog>
+          <NewProjectDialog users={users}>
             <Button variant="default">
               <Plus />
               New Project
@@ -77,17 +80,21 @@ export default async function Projects() {
         </div>
         <Separator />
         <div className="grid grid-cols-3 gap-6">
-          {projects.map(item => (
-        <Link href={`/projects/${item.slug}`} key={item.id}>
-          <CardImage
-            icon={Globe}
-            name={item.slug}
-            title={item.title}
-            description={item.description}
-            value={12}
-          />
-        </Link>
-))}
+          {projects.map(item => {
+            const done = item.tasks.filter(t => t.status === "done" || t.status === "shipped").length;
+            const progress = item.tasks.length > 0 ? Math.round((done / item.tasks.length) * 100) : 0;
+            return (
+              <Link href={`/projects/${item.slug}`} key={item.id}>
+                <CardImage
+                  icon={Globe}
+                  name={item.slug}
+                  title={item.title}
+                  description={item.description}
+                  value={progress}
+                />
+              </Link>
+            );
+          })}
         </div>
       </div>
     </div>

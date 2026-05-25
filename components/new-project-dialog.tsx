@@ -13,9 +13,18 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import {createProject} from '@/actions/actions'
+import { createProject } from "@/actions/actions";
+import { UserMultiSelect } from "@/components/user-multi-select";
 
-export function NewProjectDialog({ children }: { children: React.ReactNode }) {
+type User = { id: number; name: string; email: string };
+
+export function NewProjectDialog({
+  children,
+  users,
+}: {
+  children: React.ReactNode;
+  users: User[];
+}) {
   return (
     <Dialog>
       <DialogTrigger asChild>{children}</DialogTrigger>
@@ -39,6 +48,10 @@ export function NewProjectDialog({ children }: { children: React.ReactNode }) {
               name="description"
               placeholder="Project for keeping track of web development for SCCS"
             />
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <Label>Members</Label>
+            <UserMultiSelect users={users} name="memberIds" placeholder="Search members..." />
           </div>
           <DialogFooter>
             <DialogClose asChild>
