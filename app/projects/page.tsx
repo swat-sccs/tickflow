@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
-import { NewTicketDialog } from "@/components/new-ticket-dialog";
+import { NewProjectDialog } from "@/components/new-project-dialog";
 import {
   Card,
   CardAction,
@@ -68,12 +68,14 @@ export default function Projects() {
               6 projects. 34 total tickets across the workspace.
             </p>
           </div>
-          <NewTicketDialog>
+          <div className="flex">
+          <NewProjectDialog>
             <Button variant="default">
               <Plus />
-              New issue
+              New Project
             </Button>
-          </NewTicketDialog>
+          </NewProjectDialog>
+          </div>
         </div>
         <Separator />
         <div className="grid grid-cols-3 gap-6">
