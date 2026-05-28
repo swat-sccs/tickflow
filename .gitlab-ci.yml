@@ -1,0 +1,61 @@
+stages:
+  - build
+  - deploy
+
+variables:
+  REGISTRY: registry.sccs.swarthmore.edu/$CI_PROJECT_PATH
+
+default:
+  image: docker:29
+  services:
+    - name: docker:29-dind
+
+  before_script:
+    - docker info
+    - docker login -u $SCCS_REGISTRY_USER -p $SCCS_REGISTRY_TOKEN $SCCS_REGISTRY
+
+
+# ── BUILD ──────────────────────────────────────────────────────
+build:
+  stage: build
+  script:
+    - |
+      # Pull the previous latest imgae to use as a cache source. If it doesn't exist (e.g. first build), just continue without caching.
+      # Always tag with commit SHA
+      docker pull $SCCS_REGISTRY/sccs/tickflow/tickflow:latest || echo "No cache image found, continuing..."
+      docker build --cache-from $SCCS_REGISTRY/sccs/tickflow/tickflow:latest -f Dockerfile --build-arg BUILDKIT_INLINE_CACHE=1 -t $REGISTRY:$CI_COMMIT_SHORT_SHA .
+
+      # If this is a tag push (e.g. v1.0), also tag with that
+      if [ -n "$CI_COMMIT_TAG" ]; then
+        docker tag $REGISTRY:$CI_COMMIT_SHORT_SHA $REGISTRY:$CI_COMMIT_TAG
+        docker push $REGISTRY:$CI_COMMIT_TAG
+
+        # Also push :latest on any tag
+        docker tag $REGISTRY:$CI_COMMIT_SHORT_SHA $REGISTRY:latest
+        docker push $REGISTRY:latest
+      fi
+
+      # Always push the SHA tag
+      docker push $REGISTRY:$CI_COMMIT_SHORT_SHA
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"   # push to main
+    # Semantic version only: v1.0, v1.0.0
+    - if: $CI_COMMIT_TAG =~ /^v\d+\.\d+(\.\d+)?$/
+
+
+deploy:
+  stage: deploy
+  services: []  # Disable dind
+  variables:
+    DOCKER_HOST: "unix:///var/run/docker.sock"
+  script:
+    - cp "$TICKFLOW_ENV_FILE" /tmp/tickflow_env
+    - docker secret rm tickflow_env || true
+    - docker secret create tickflow_env /tmp/tickflow_env
+    - rm /tmp/tickflow_env
+    - IMAGE_TAG=$CI_COMMIT_TAG docker stack deploy \
+        --with-registry-auth \
+        -c compose.swarm.yml \
+        tickflow
+  rules:
+    - if: $CI_COMMIT_TAG =~ /^v\d+\.\d+/   # only deploy on v1.0, v2.3, etc.
