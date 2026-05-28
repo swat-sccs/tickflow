@@ -2,11 +2,12 @@
 
 name: Mirror
 
+# Only mirror if build succeeds
 on:
-  push:
-    branches: ["main"]
-    tags:
-      - "v*"          # ← catches v1.0, v1.2.3, etc.
+   workflow_run:
+      workflows: ["Build"]
+      types:
+        - completed
 
 jobs:
   mirror:
