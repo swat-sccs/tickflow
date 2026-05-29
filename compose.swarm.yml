@@ -1,0 +1,57 @@
+services:
+  tickflow:
+    image: registry.sccs.swarthmore.edu/sccs/tickflow/tickflow:${IMAGE_TAG:-latest}
+    secrets:
+      - tickflow_env
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == gull
+      labels:
+        - "traefik.enable=true"
+        - "traefik.docker.network=traefik"
+        - "traefik.http.routers.tickflow.entrypoints=https"
+        - "traefik.http.routers.tickflow.rule=Host(`tickflow.sccs.swarthmore.edu`)"
+        - "traefik.http.routers.tickflow.tls=true"
+        - "traefik.http.routers.tickflow.tls.certresolver=letsEncrypt"
+        - "traefik.http.services.tickflow.loadbalancer.server.port=3000"
+    restart: unless-stopped
+    networks:
+      - traefik
+      - internal
+
+  tickflow-db:
+    image: postgres:18.4
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == gull
+    environment:
+      POSTGRES_DB: tickflow
+      POSTGRES_USER: postgres
+    volumes:
+      - tickflow-dbdata:/var/lib/postgresql/data
+    networks:
+      - internal
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready --dbname tickflow --username postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  internal:
+  traefik:
+    external: true
+
+secrets:
+  tickflow_env:
+    external: true
+
+volumes:
+  tickflow-dbdata:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /volumes/database/tickflow-dbdata

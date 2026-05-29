@@ -1,0 +1,25 @@
+# Force push code to GitLab for deployment
+
+name: Mirror
+
+# Only mirror if build succeeds
+on:
+   workflow_run:
+      workflows: ["Build"]
+      types:
+        - completed
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0    # ← fetch full history + all tags
+      - uses: yesolutions/mirror-action@master
+        with:
+          REMOTE: 'ssh://git@gitlab.sccs.swarthmore.edu:2222/sccs/tickflow.git'
+          GIT_SSH_PRIVATE_KEY: ${{ secrets.MIRRORBOT_GIT_SSH_PRIVATE_KEY }}
+          GIT_SSH_KNOWN_HOSTS: ${{ secrets.MIRRORBOT_GIT_SSH_KNOWN_HOSTS }}
+          GIT_PUSH_ARGS: "--tags"
