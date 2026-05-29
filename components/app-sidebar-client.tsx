@@ -1,5 +1,6 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import {
   Sidebar,
   SidebarContent,
@@ -37,6 +38,8 @@ const sidebarSettings = [
 type Project = { slug: string; title: string };
 
 export function AppSidebarClient({ projects }: { projects: Project[] }) {
+  const pathname = usePathname();
+
   return (
     <Sidebar className="h-full">
       <SidebarContent className="h-full overflow-hidden">
@@ -47,7 +50,7 @@ export function AppSidebarClient({ projects }: { projects: Project[] }) {
           <SidebarMenu>
             {sidebarWorkspace.map(item => (
               <SidebarMenuItem key={item.label}>
-                <SidebarMenuButton asChild>
+                <SidebarMenuButton asChild isActive={pathname === item.url}>
                   <a href={item.url}>
                     <item.icon />
                     <span>{item.label}</span>
@@ -65,7 +68,7 @@ export function AppSidebarClient({ projects }: { projects: Project[] }) {
           <SidebarMenu>
             {projects.map(p => (
               <SidebarMenuItem key={p.slug}>
-                <SidebarMenuButton asChild>
+                <SidebarMenuButton asChild isActive={pathname === `/projects/${p.slug}`}>
                   <a href={`/projects/${p.slug}`}>
                     <Circle className="size-2 fill-current" />
                     <span>{p.title}</span>
@@ -86,7 +89,7 @@ export function AppSidebarClient({ projects }: { projects: Project[] }) {
           <SidebarMenu>
             {sidebarSettings.map(item => (
               <SidebarMenuItem key={item.label}>
-                <SidebarMenuButton asChild>
+                <SidebarMenuButton asChild isActive={pathname === item.url}>
                   <a href={item.url}>
                     <item.icon />
                     <span>{item.label}</span>

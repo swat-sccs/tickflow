@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Users, Plus, SignalHigh, SignalMedium, SignalLow } from "lucide-react";
 import {
@@ -67,7 +68,8 @@ export default async function ProjectItem({ params }: ProjectItemProps) {
 
       {/* breadcrumb */}
       <p className="text-sm text-muted-foreground">
-        projects &gt; {project.slug}
+        <Link href="/projects" className="hover:text-foreground transition-colors">projects</Link>
+        {" > "}{project.slug}
       </p>
 
       {/* header */}
