@@ -5,7 +5,7 @@ WORKDIR /app
 # ---- Dependencies ----
 FROM base AS deps
 
-COPY package.json bun.lock ./
+COPY package.json bun.lock prisma ./
 RUN bun install --frozen-lockfile
 
 # ---- Build ----
@@ -34,4 +34,4 @@ COPY --from=builder /app/public ./public
 
 EXPOSE 3000
 
-CMD ["bun","run", "--bun",  "start"]
+CMD ["bun", "server.js"]

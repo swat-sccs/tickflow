@@ -38,7 +38,6 @@ build:
       # Always push the SHA tag
       docker push $REGISTRY:$CI_COMMIT_SHORT_SHA
   rules:
-    - if: $CI_COMMIT_BRANCH == "main"   # push to main
     # Semantic version only: v1.0, v1.0.0
     - if: $CI_COMMIT_TAG =~ /^v\d+\.\d+(\.\d+)?$/
 
@@ -58,4 +57,4 @@ deploy:
         -c compose.swarm.yml \
         tickflow
   rules:
-    - if: $CI_COMMIT_TAG =~ /^v\d+\.\d+/   # only deploy on v1.0, v2.3, etc.
+    - if: $CI_COMMIT_TAG =~ /^v\d+\.\d+(\.\d+)?$/  # only deploy on v1.0, v2.3, etc.
