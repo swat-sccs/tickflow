@@ -19,7 +19,7 @@ jobs:
           fetch-depth: 0    # ← fetch full history + all tags
       - uses: yesolutions/mirror-action@master
         with:
-          REMOTE: 'ssh://git@gitlab.sccs.swarthmore.edu:2222/sccs/tickflow.git'
-          GIT_SSH_PRIVATE_KEY: ${{ secrets.MIRRORBOT_GIT_SSH_PRIVATE_KEY }}
-          GIT_SSH_KNOWN_HOSTS: ${{ secrets.MIRRORBOT_GIT_SSH_KNOWN_HOSTS }}
+          REMOTE: 'https://gitlab.sccs.swarthmore.edu/sccs/tickflow.git'
+          GIT_USERNAME: mirrorbot
+          GIT_PASSWORD: ${{ secrets.MIRRORBOT_GIT_PASSWORD }}
           GIT_PUSH_ARGS: "--tags"
