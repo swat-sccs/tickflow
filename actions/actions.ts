@@ -1,9 +1,20 @@
 'use server'
 
 import {prisma} from '@/lib/prisma'
-import { Priority, Status } from '@prisma/client'
+import { Priority, Project, Status } from '@prisma/client'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
+
+
+
+export async function getProjects() {
+  const projects = await prisma.project.findMany({
+    orderBy: { id: "asc" },
+  });
+
+  return projects as Project[];
+}
+
 
 export async function createTask(formData: FormData) {
     const title = formData.get('title') as string
@@ -57,4 +68,24 @@ export async function createProject(formData: FormData){
     })
     revalidatePath('/projects')
     redirect('/projects')
+}
+
+export async function getDashboardData() {
+    const [projectsWithTasks, users, totalOpen, inProgress, closed] =
+        await Promise.all([
+            prisma.project.findMany({
+                select: {
+                    id: true,
+                    slug: true,
+                    title: true,
+                    tasks: { select: { status: true } },
+                },
+            }),
+            prisma.user.findMany({ select: { id: true, name: true, email: true } }),
+            prisma.task.count({ where: { status: { notIn: ["done", "shipped"] } } }),
+            prisma.task.count({ where: { status: "inprogress" } }),
+            prisma.task.count({ where: { status: { in: ["done", "shipped"] } } }),
+        ]);
+
+    return { projectsWithTasks, users, totalOpen, inProgress, closed };
 }

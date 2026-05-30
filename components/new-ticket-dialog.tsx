@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
 import {
   Dialog,
   DialogClose,
@@ -21,13 +22,13 @@ type Project = { id: number; slug: string; title: string };
 type User = { id: number; name: string; email: string };
 
 export function NewTicketDialog({
-  children,
   projects,
   users,
+  triggerLabel,
 }: {
-  children: React.ReactNode;
   projects: Project[];
   users: User[];
+  triggerLabel: string;
 }) {
   const [open, setOpen] = useState(false);
   const [formKey, setFormKey] = useState(0);
@@ -40,7 +41,12 @@ export function NewTicketDialog({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>{children}</DialogTrigger>
+      <DialogTrigger asChild>
+        <Button variant="default">
+          <Plus />
+          {triggerLabel}
+        </Button>
+      </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>New Ticket</DialogTitle>

@@ -24,6 +24,7 @@ CREATE TABLE "Project" (
     "slug" TEXT NOT NULL,
     "title" TEXT NOT NULL,
     "description" TEXT NOT NULL,
+    "icon" TEXT NOT NULL DEFAULT 'Globe',
 
     CONSTRAINT "Project_pkey" PRIMARY KEY ("id")
 );
@@ -61,9 +62,6 @@ CREATE TABLE "TaskAssignee" (
 
 -- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
-
--- CreateIndex
-CREATE UNIQUE INDEX "Project_slug_key" ON "Project"("slug");
 
 -- AddForeignKey
 ALTER TABLE "Task" ADD CONSTRAINT "Task_projectId_fkey" FOREIGN KEY ("projectId") REFERENCES "Project"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

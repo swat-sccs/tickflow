@@ -1,0 +1,28 @@
+#Development Docker Compose file for Tickflow application.
+
+# Database is stored in a docker volume,
+# thefore it will not persist if the volume is removed.
+# This is intentional to allow for easy cleanup during development.
+services:
+  tickflow:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    environment:
+      NODE_ENV: development
+      NEXT_TELEMETRY_DISABLED: 1
+      PORT: 3000
+      DATABASE_URL: postgresql://postgres:development_only@tickflow-db:5432/tickflow
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    command: "sh -lc 'bun install --frozzen-lockfile && bunx prisma migrate deploy  && bun --bun run dev'"
+    volumes:
+      - .:/app
+
+  tickflow-db:
+    image: postgres:18.4
+    environment:
+      POSTGRES_DB: tickflow
+      POSTGRES_PASSWORD: development_only
+      POSTGRES_USER: postgres

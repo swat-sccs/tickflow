@@ -16,10 +16,9 @@ import { Share_Tech } from "next/font/google";
 import { Command, CommandInput } from "@/components/ui/command";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "./ui/separator";
-import { useTheme } from "./theme-provider";
+import { useTheme } from "next-themes";
 import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
-
+import { useEffect, useState } from "react";
 const shareTech = Share_Tech({
   weight: "400",
   subsets: ["latin"],
@@ -27,14 +26,17 @@ const shareTech = Share_Tech({
 });
 
 type SearchResults = {
-  projects: { slug: string; title: string }[];
+  projects: { slug: string; title: string; id: number }[];
   tasks: { id: number; title: string; projectSlug: string }[];
 };
 
 function SearchBar() {
   const router = useRouter();
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState<SearchResults>({ projects: [], tasks: [] });
+  const [results, setResults] = useState<SearchResults>({
+    projects: [],
+    tasks: [],
+  });
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -69,13 +71,15 @@ function SearchBar() {
         <div className="absolute top-full left-0 right-0 z-50 mt-1 overflow-hidden rounded-lg border bg-popover text-popover-foreground shadow-md">
           {results.projects.length > 0 && (
             <div className="p-1">
-              <p className="px-2 py-1.5 text-xs font-medium text-muted-foreground">Projects</p>
+              <p className="px-2 py-1.5 text-xs font-medium text-muted-foreground">
+                Projects
+              </p>
               {results.projects.map((p) => (
                 <button
-                  key={p.slug}
+                  key={p.id}
                   className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-muted"
                   onMouseDown={() => {
-                    router.push(`/projects/${p.slug}`);
+                    router.push(`/projects/${p.id}`);
                     setQuery("");
                     setOpen(false);
                   }}
@@ -91,7 +95,9 @@ function SearchBar() {
           )}
           {results.tasks.length > 0 && (
             <div className="p-1">
-              <p className="px-2 py-1.5 text-xs font-medium text-muted-foreground">Tickets</p>
+              <p className="px-2 py-1.5 text-xs font-medium text-muted-foreground">
+                Tickets
+              </p>
               {results.tasks.map((t) => (
                 <button
                   key={t.id}
@@ -156,10 +162,16 @@ function ProfileAvatar() {
 
 const AppHeader = () => {
   return (
-    <header className="h-14 shrink-0 border-b bg-background text-foreground">
+    <header className="h-15 shrink-0 border-b bg-background text-foreground">
       <div className="grid h-full grid-cols-[auto_1fr_auto] items-center gap-4 px-4">
         <div className="flex items-center gap-2">
-          <Image src="/logo.png" alt="Logo error" width={35} height={35} />
+          <Image
+            src="/logo.png"
+            loading="eager"
+            alt="Logo"
+            width={35}
+            height={35}
+          />
           <p className={`text-2xl ${shareTech.className}`}>tickflow</p>
         </div>
         <div className="flex justify-center">

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -23,17 +24,22 @@ type User = { id: number; name: string; email: string };
 const iconNames = Object.keys(PROJECT_ICONS) as ProjectIconName[];
 
 export function NewProjectDialog({
-  children,
   users,
+  triggerLabel,
 }: {
-  children: React.ReactNode;
   users: User[];
+  triggerLabel: string;
 }) {
   const [selectedIcon, setSelectedIcon] = useState<ProjectIconName>("Globe");
 
   return (
     <Dialog>
-      <DialogTrigger asChild>{children}</DialogTrigger>
+      <DialogTrigger asChild>
+        <Button variant="default">
+          <Plus />
+          {triggerLabel}
+        </Button>
+      </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>New Project</DialogTitle>

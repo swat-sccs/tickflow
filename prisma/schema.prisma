@@ -38,7 +38,7 @@ model User {
 
 model Project {
   id             Int              @id @default(autoincrement())
-  slug           String           @unique
+  slug           String           
   title          String
   description    String
   icon           String           @default("Globe")

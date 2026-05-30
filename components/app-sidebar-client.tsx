@@ -21,23 +21,31 @@ import {
   Settings,
   Circle,
 } from "lucide-react";
+import Link from "next/link";
+
+import type { Project } from "@prisma/client";
+import { Skeleton } from "./ui/skeleton";
 
 const sidebarWorkspace = [
-  { url: "/",         icon: House,    label: "Dashboard" },
-  { url: "/board",    icon: Kanban,   label: "Board" },
-  { url: "/issues",   icon: List,     label: "My issues" },
-  { url: "/projects", icon: Folder,   label: "Projects" },
+  { url: "/", icon: House, label: "Dashboard" },
+  { url: "/board", icon: Kanban, label: "Board" },
+  { url: "/issues", icon: List, label: "My issues" },
+  { url: "/projects", icon: Folder, label: "Projects" },
   { url: "/activity", icon: Activity, label: "Activity" },
 ];
 
 const sidebarSettings = [
-  { url: "/members",  icon: Users,    label: "Members" },
+  { url: "/members", icon: Users, label: "Members" },
   { url: "/settings", icon: Settings, label: "Settings" },
 ];
 
-type Project = { slug: string; title: string };
-
-export function AppSidebarClient({ projects }: { projects: Project[] }) {
+export function AppSidebarClient({
+  projects,
+  loading,
+}: {
+  projects: Project[];
+  loading: boolean;
+}) {
   const pathname = usePathname();
 
   return (
@@ -48,13 +56,13 @@ export function AppSidebarClient({ projects }: { projects: Project[] }) {
             Application
           </SidebarGroupLabel>
           <SidebarMenu>
-            {sidebarWorkspace.map(item => (
+            {sidebarWorkspace.map((item) => (
               <SidebarMenuItem key={item.label}>
                 <SidebarMenuButton asChild isActive={pathname === item.url}>
-                  <a href={item.url}>
+                  <Link href={item.url}>
                     <item.icon />
                     <span>{item.label}</span>
-                  </a>
+                  </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             ))}
@@ -65,21 +73,28 @@ export function AppSidebarClient({ projects }: { projects: Project[] }) {
           <SidebarGroupLabel className="uppercase text-base text-foreground">
             Projects
           </SidebarGroupLabel>
-          <SidebarMenu>
-            {projects.map(p => (
-              <SidebarMenuItem key={p.slug}>
-                <SidebarMenuButton asChild isActive={pathname === `/projects/${p.slug}`}>
-                  <a href={`/projects/${p.slug}`}>
-                    <Circle className="size-2 fill-current" />
-                    <span>{p.title}</span>
-                  </a>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            ))}
-            {projects.length === 0 && (
-              <p className="px-2 text-xs text-muted-foreground">No projects yet.</p>
-            )}
-          </SidebarMenu>
+          {loading ? (
+            <div className="flex flex-col gap-2 px-2">
+              <Skeleton className="h-8 w-full bg-primary/50" />
+              <Skeleton className="h-8 w-full bg-primary/50" />
+            </div>
+          ) : (
+            <SidebarMenu>
+              {projects.map((p) => (
+                <SidebarMenuItem key={p.id}>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={pathname === `/projects/${p.id}`}
+                  >
+                    <Link href={`/projects/${p.id}`}>
+                      <Circle className="size-2 fill-current" />
+                      <span>{p.title}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          )}
         </SidebarGroup>
 
         <SidebarGroup>
@@ -87,13 +102,13 @@ export function AppSidebarClient({ projects }: { projects: Project[] }) {
             Settings
           </SidebarGroupLabel>
           <SidebarMenu>
-            {sidebarSettings.map(item => (
+            {sidebarSettings.map((item) => (
               <SidebarMenuItem key={item.label}>
                 <SidebarMenuButton asChild isActive={pathname === item.url}>
-                  <a href={item.url}>
+                  <Link href={item.url}>
                     <item.icon />
                     <span>{item.label}</span>
-                  </a>
+                  </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             ))}

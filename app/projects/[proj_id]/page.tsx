@@ -16,6 +16,8 @@ import { NewTicketDialog } from "@/components/new-ticket-dialog";
 import { prisma } from "@/lib/prisma";
 import { Priority, Status } from "@prisma/client";
 
+export const dynamic = "force-dynamic";
+
 type ProjectItemProps = {
   params: Promise<{ proj_id: string }>;
 };
@@ -35,7 +37,10 @@ const statusLabel: Record<Status, string> = {
   shipped: "Shipped",
 };
 
-const statusVariant: Record<Status, "secondary" | "outline" | "destructive" | "default"> = {
+const statusVariant: Record<
+  Status,
+  "secondary" | "outline" | "destructive" | "default"
+> = {
   backlog: "outline",
   todo: "secondary",
   inprogress: "default",
@@ -45,12 +50,19 @@ const statusVariant: Record<Status, "secondary" | "outline" | "destructive" | "d
 };
 
 export default async function ProjectItem({ params }: ProjectItemProps) {
-  const { proj_id } = await params;
+  const { proj_id } = await params; //Not necesarily a number
+  const project_index = Number(proj_id); //Ensures its a number
 
+  {
+    /* Previously use project slug, but the url would break it because
+        url escapes spaces with %20 and that doesn't match slug in the db. */
+  }
   const [project, allProjects, users] = await Promise.all([
     prisma.project.findUnique({
-      where: { slug: proj_id },
-      include: { tasks: { include: { assignees: { include: { user: true } } } } },
+      where: { id: project_index },
+      include: {
+        tasks: { include: { assignees: { include: { user: true } } } },
+      },
     }),
     prisma.project.findMany({ select: { id: true, slug: true, title: true } }),
     prisma.user.findMany({ select: { id: true, name: true, email: true } }),
@@ -58,14 +70,19 @@ export default async function ProjectItem({ params }: ProjectItemProps) {
 
   if (!project) notFound();
 
-  const open = project.tasks.filter(t => t.status !== "done" && t.status !== "shipped").length;
-  const inProgress = project.tasks.filter(t => t.status === "inprogress").length;
-  const blocked = project.tasks.filter(t => t.status === "blocked").length;
-  const done = project.tasks.filter(t => t.status === "done" || t.status === "shipped").length;
+  const open = project.tasks.filter(
+    (t) => t.status !== "done" && t.status !== "shipped",
+  ).length;
+  const inProgress = project.tasks.filter(
+    (t) => t.status === "inprogress",
+  ).length;
+  const blocked = project.tasks.filter((t) => t.status === "blocked").length;
+  const done = project.tasks.filter(
+    (t) => t.status === "done" || t.status === "shipped",
+  ).length;
 
   return (
     <div className="w-[90%] flex flex-col gap-8 mx-auto py-10">
-
       {/* breadcrumb */}
       <p className="text-sm text-muted-foreground">
         <Link href="/projects" className="hover:text-foreground transition-colors">projects</Link>
@@ -83,12 +100,11 @@ export default async function ProjectItem({ params }: ProjectItemProps) {
             <Users />
             Invite
           </Button>
-          <NewTicketDialog projects={allProjects} users={users}>
-            <Button>
-              <Plus />
-              New Issue
-            </Button>
-          </NewTicketDialog>
+          <NewTicketDialog
+            projects={allProjects}
+            users={users}
+            triggerLabel="New Issue"
+          />
         </div>
       </div>
 
@@ -130,7 +146,10 @@ export default async function ProjectItem({ params }: ProjectItemProps) {
         <TableBody>
           {project.tasks.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={5} className="text-center text-muted-foreground py-12">
+              <TableCell
+                colSpan={5}
+                className="text-center text-muted-foreground py-12"
+              >
                 No tickets yet. Create one to get started.
               </TableCell>
             </TableRow>
@@ -161,8 +180,12 @@ export default async function ProjectItem({ params }: ProjectItemProps) {
                     <span className="text-sm text-muted-foreground">—</span>
                   ) : (
                     <div className="flex flex-wrap gap-1">
-                      {task.assignees.map(a => (
-                        <Badge key={a.userId} variant="outline" className="text-xs">
+                      {task.assignees.map((a) => (
+                        <Badge
+                          key={a.userId}
+                          variant="outline"
+                          className="text-xs"
+                        >
                           {a.user.name}
                         </Badge>
                       ))}
@@ -171,7 +194,11 @@ export default async function ProjectItem({ params }: ProjectItemProps) {
                 </TableCell>
                 <TableCell className="text-sm text-muted-foreground">
                   {task.dueDate
-                    ? task.dueDate.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
+                    ? task.dueDate.toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                        year: "numeric",
+                      })
                     : "—"}
                 </TableCell>
               </TableRow>

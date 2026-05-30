@@ -1,0 +1,25 @@
+# ============================================
+# Development Dockerfile for Next.js (Bun)
+# ============================================
+
+FROM oven/bun AS dev
+
+WORKDIR /app
+
+COPY package.json bun.lock prisma ./
+
+
+RUN --mount=type=cache,target=/root/.bun/install/cache \
+    bun install --frozen-lockfile
+
+COPY . .
+
+ENV WATCHPACK_POLLING=true
+ENV HOSTNAME="0.0.0.0"
+
+RUN chown -R bun:bun /app
+USER bun
+
+EXPOSE 3000
+
+CMD ["bun","--bun", "run", "dev"]

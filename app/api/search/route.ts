@@ -8,12 +8,12 @@ export async function GET(request: NextRequest) {
   const [projects, tasks] = await Promise.all([
     prisma.project.findMany({
       where: { title: { contains: q, mode: "insensitive" } },
-      select: { slug: true, title: true },
+      select: { slug: true, title: true, id: true},
       take: 5,
     }),
     prisma.task.findMany({
       where: { title: { contains: q, mode: "insensitive" } },
-      select: { id: true, title: true, project: { select: { slug: true } } },
+      select: { id: true, title: true, project: { select: { slug: true , id: true} } },
       take: 5,
     }),
   ]);
