@@ -22,4 +22,4 @@ jobs:
           REMOTE: 'https://gitlab.sccs.swarthmore.edu/sccs/tickflow.git'
           GIT_USERNAME: mirrorbot
           GIT_PASSWORD: ${{ secrets.MIRRORBOT_GIT_PASSWORD }}
-          GIT_PUSH_ARGS: "--tags"
+          GIT_PUSH_ARGS: "--tags --force"  # ← push all tags, and force push to overwrite GitLab history
