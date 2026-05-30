@@ -1,6 +1,6 @@
 services:
   tickflow:
-    image: registry.sccs.swarthmore.edu/sccs/tickflow/tickflow:${IMAGE_TAG:-latest}
+    image: registry.sccs.swarthmore.edu/sccs/tickflow:${IMAGE_TAG:-latest}
     secrets:
       - tickflow_env
     deploy:
@@ -26,6 +26,8 @@ services:
       placement:
         constraints:
           - node.hostname == gull
+    secrets:
+      - tickflow_env
     environment:
       POSTGRES_DB: tickflow
       POSTGRES_USER: postgres
