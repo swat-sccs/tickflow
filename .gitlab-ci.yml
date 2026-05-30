@@ -48,7 +48,7 @@ deploy:
   variables:
     DOCKER_HOST: "unix:///var/run/docker.sock"
   script:
-    - cp "$TICKFLOW_ENV_FILE" /tmp/tickflow_env
+    - cp $TICKFLOW_ENV_FILE /tmp/tickflow_env
     - docker secret rm tickflow_env || true
     - docker secret create tickflow_env /tmp/tickflow_env
     - rm /tmp/tickflow_env
