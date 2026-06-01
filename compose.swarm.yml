@@ -1,6 +1,6 @@
 services:
   tickflow:
-    image: registry.sccs.swarthmore.edu/sccs/tickflow:latest
+    image: registry.sccs.swarthmore.edu/sccs/tickflow:${IMAGE_TAG:-latest}
     secrets:
       - tickflow_env
     deploy:
