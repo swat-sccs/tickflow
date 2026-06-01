@@ -1,14 +1,13 @@
 services:
   tickflow:
     image: registry.sccs.swarthmore.edu/sccs/tickflow:${IMAGE_TAG:-latest}
-    secrets:
-      - tickflow_env
+    env_file:
+      - .env
     deploy:
       placement:
         constraints:
           - node.hostname == gull
       labels:
-        - "shepherd.enable=true"
         - "traefik.enable=true"
         - "traefik.docker.network=traefik"
         - "traefik.http.routers.tickflow.entrypoints=https"
@@ -24,12 +23,12 @@ services:
 
   tickflow-db:
     image: postgres:18.4
+    env_file:
+      - .env
     deploy:
       placement:
         constraints:
           - node.hostname == gull
-    secrets:
-      - tickflow_env
     environment:
       POSTGRES_DB: tickflow
       POSTGRES_USER: postgres
@@ -46,10 +45,6 @@ services:
 networks:
   internal:
   traefik:
-    external: true
-
-secrets:
-  tickflow_env:
     external: true
 
 volumes:
