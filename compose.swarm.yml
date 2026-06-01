@@ -17,6 +17,7 @@ services:
         - "traefik.http.routers.tickflow.tls.certresolver=letsEncrypt"
         - "traefik.http.services.tickflow.loadbalancer.server.port=3000"
     restart: unless-stopped
+    command: "sh -lc 'bunx prisma migrate deploy && bun --bun run start -- --hostname 0.0.0.0'"
     networks:
       - traefik
       - internal
@@ -33,7 +34,7 @@ services:
       POSTGRES_DB: tickflow
       POSTGRES_USER: postgres
     volumes:
-      - tickflow-dbdata:/var/lib/postgresql/data
+      - tickflow-dbdata:/var/lib/postgresql
     networks:
       - internal
     healthcheck:

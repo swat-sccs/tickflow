@@ -41,18 +41,12 @@ build:
     # Semantic version only: v1.0, v1.0.0
     - if: $CI_COMMIT_TAG =~ /^v\d+\.\d+(\.\d+)?$/
 
-
-# deploy:
-#   stage: deploy
-#   services: []  # Disable dind
-#   variables:
-#     DOCKER_HOST: "unix:///var/run/docker.sock"
-#   script:
-#     - cp $TICKFLOW_ENV_FILE /tmp/tickflow_env
-#     - docker stack down tickflow || true
-#     - docker secret rm tickflow_env || true
-#     - docker secret create tickflow_env /tmp/tickflow_env
-#     - rm /tmp/tickflow_env
-#     - IMAGE_TAG=$CI_COMMIT_TAG docker stack deploy --with-registry-auth  -c compose.swarm.yml tickflow
-#   rules:
-#     - if: $CI_COMMIT_TAG =~ /^v\d+\.\d+(\.\d+)?$/  # only deploy on v1.0, v2.3, etc.
+deploy:
+  stage: deploy
+  services: []
+  variables:
+    DOCKER_HOST: "unix:///var/run/docker.sock"
+  script:
+    - cp $TICKFLOW_ENV_FILE .env
+    - IMAGE_TAG=$CI_COMMIT_TAG docker stack deploy --with-registry-auth  -c compose.swarm.yml tickflow
+  when: on_success # Optional: This is default behavior
